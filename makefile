@@ -9,4 +9,4 @@ run:
 
 tests:
 	. ./venv/bin/activate
-	unittest discover -s 'test/unit' -p '*_test.py'
+	unittest discover -s 'test' -p '*_test.py'

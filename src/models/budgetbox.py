@@ -1,16 +1,18 @@
 from typing import List
 
-from src.models.budget_categorie import BudgetCategory
+from src.models.budget_category import BudgetCategory
+from src.models.entity import EntityModel
 
 
-class BudgetBox:
+class BudgetBox(EntityModel):
     """
     Class for a budget box.
     """
 
     def __init__(self, amount):
+        super().__init__()
         self.amount = amount
-        self.categories = []
+        self.categories_id_list = []
 
     def get_total_amount(self) -> float:
         """
@@ -18,27 +20,40 @@ class BudgetBox:
         :return:
         """
         total = 0
-        for category in self.categories:
+        categories_object = self.get_categories_object()
+
+        for category in categories_object:
             total += category.budget
         return total
 
-    def add_category(self, category_name, amount=0):
+    def add_category(self, budget_category_object: BudgetCategory):
         """
         Adds a category to the budget box.
-        :param category_name: str
-        :param amount: float
+        :param budget_category_object: BudgetCategory
         :raise Exception: if there is no budget left
         """
-        if self.get_total_amount() + amount > self.amount:
+        if self.get_total_amount() + budget_category_object.amount > self.amount:
             raise Exception("Budget is over")
-        self.categories.append(BudgetCategory(category_name, amount))
+        self.categories_id_list.append(str(budget_category_object.id))
+
+    def remove_category(self, budget_category):
+        """
+        Removes the given category from the budget box.
+        :param budget_category: BudgetCategory
+        :raise Exception: if category does not exist
+        """
+        category_id = str(budget_category.id)
+        self.categories_id_list.remove(category_id)
+
+    def get_categories_object(self):
+        return [self.get(category_id) for category_id in self.categories_id_list]
 
     def get_categories_name(self) -> List[str]:
         """
         Returns a list of the names of the categories.
         :return: list[str]
         """
-        return [category.name for category in self.categories]
+        return [category.name for category in self.get_categories_object()]
 
     def withdraw_from_category(self, category_name, amount):
         """
@@ -47,7 +62,9 @@ class BudgetBox:
         :param amount: float
         :raise Exception: if category does not exist or if there is no budget left
         """
-        category_object = list(filter(lambda x: x.name == category_name, self.categories))
+        categories_object = [self.get(category_id) for category_id in self.categories_id_list]
+
+        category_object = list(filter(lambda x: x.name == category_name, self.get_categories_object()))
         category_object = category_object[0] if len(category_object) else None
 
         if not category_object:
@@ -65,7 +82,7 @@ class BudgetBox:
         :param amount: float
         :raise Exception: if category does not exist or if there is no budget left
         """
-        category_object = list(filter(lambda x: x.name == category_name, self.categories))
+        category_object = list(filter(lambda x: x.name == category_name, self.get_categories_object()))
         category_object = category_object[0] if len(category_object) else None
 
         if not category_object:
@@ -85,7 +102,7 @@ class BudgetBox:
         if len(self.categories) == 0:
             categories_string = "No categories"
         else:
-            categories_string = ''.join([str(category) for category in self.categories])
+            categories_string = ''.join([str(category) for category in self.get_categories_object()])
 
         return f"\tBudgetBox: {self.amount}\n" \
                f"\t\tCategories: {categories_string}"
@@ -97,6 +114,10 @@ class BudgetBox:
         :return: dict
         """
         return {
+            **super().to_json(),
             "amount": self.amount,
-            "categories": [category.to_json() for category in self.categories]
+            "categories": self.categories_id_list
         }
+
+    def get_budget_categories_list(self) -> List[BudgetCategory]:
+        return [BudgetCategory.get(category_id) for category_id in self.categories_id_list]

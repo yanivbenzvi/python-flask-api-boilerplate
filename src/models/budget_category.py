@@ -1,10 +1,16 @@
-class BudgetCategory:
+from typing import List
+
+from src.models.entity import EntityModel
+
+
+class BudgetCategory(EntityModel):
     def __init__(self, name: str, amount: float):
         """
         Initialize a new budget category
         :param name: str
         :param amount: float
         """
+        super().__init__()
         self.name = name
         self.amount = amount
 
@@ -34,7 +40,7 @@ class BudgetCategory:
 
     def to_json(self) -> dict:
         return {
+            **super().to_json(),
             "name": self.name,
             "amount": self.amount
         }
-

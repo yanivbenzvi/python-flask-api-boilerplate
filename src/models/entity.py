@@ -37,14 +37,10 @@ class EntityModel:
     def delete(self):
         MemoryDbStore().delete(str(self.id))
 
-    @staticmethod
-    def get_all():
+    @classmethod
+    def get_all(cls):
         """
         Returns a list of all users in the database
         :return: list[User]
         """
-        return MemoryDbStore().get_all_by_instance_type(EntityModel.get_instance_type())
-
-    @classmethod
-    def get_instance_type(cls):
-        return cls
+        return MemoryDbStore().get_all_by_instance_type(cls)

@@ -1,10 +1,7 @@
-from typing import List
-
-from src.models.budgetbox import BudgetBox
 import uuid
+from uuid import UUID
 
 from src.models.entity import EntityModel
-from src.utility import MemoryDbStore
 
 
 class User(EntityModel):
@@ -12,22 +9,15 @@ class User(EntityModel):
     User class
     """
 
-    def __init__(self, username: str, budget_amount: float):
+    def __init__(self, username: str, budget_id: UUID = None):
         """
         Initializes a user
         :param username: str
-        :param budget_amount: float
+        :param budget_id: UUID
         """
         super().__init__()
         self.username = username
-        self.budget = BudgetBox(budget_amount)
-
-    def get_categories_name(self) -> List[str]:
-        """
-        Returns a list of all categories in the user's budget
-        :return: list[str]
-        """
-        return self.budget.get_categories_name()
+        self.budget_id = None
 
     def __str__(self) -> str:
         """
@@ -37,7 +27,14 @@ class User(EntityModel):
         return f"User Information: \n" \
                f"\tUsername: {self.username}\n" \
                f"\tID: {self.id}\n" \
-               f"\tBudget: {self.budget}\n"
+               f"\tBudget_id: {self.budget_id}\n"
+
+    def set_budget_box_id(self, budget_id: UUID):
+        """
+        Sets the budget box id of the user
+        :param budget_id: str
+        """
+        self.budget_id = budget_id
 
     def to_json(self) -> dict:
         """
@@ -47,13 +44,12 @@ class User(EntityModel):
         return {
             **super().to_json(),
             "username": self.username,
-            "budget": self.budget.to_json()
+            "budget_id": str(self.budget_id)
         }
 
     def update(self, username: str):
         """
         Updates a user's username and budget amount
         :param username: str
-        :param budget_amount: float
         """
         self.username = username

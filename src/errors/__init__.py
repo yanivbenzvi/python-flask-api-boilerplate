@@ -17,9 +17,6 @@ def register_error_handlers(app):
             "stack_trace": err.traceback if app.config["DEBUG"] else "",
         }
 
-        if len(err.args) > 0:
-            response["message"] = err.args[0]
-
         return jsonify(response), err.status_code
 
     @app.errorhandler(HTTPStatus.INTERNAL_SERVER_ERROR)
