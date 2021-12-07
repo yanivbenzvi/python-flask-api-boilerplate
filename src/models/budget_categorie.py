@@ -32,3 +32,9 @@ class BudgetCategory:
         """
         return f"\t\tCategory name: {self.name} \t Category Amount {self.amount}\n"
 
+    def to_json(self) -> dict:
+        return {
+            "name": self.name,
+            "amount": self.amount
+        }
+

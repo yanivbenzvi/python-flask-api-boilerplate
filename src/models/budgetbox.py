@@ -1,4 +1,6 @@
-from src.model.budget_categorie import BudgetCategory
+from typing import List
+
+from src.models.budget_categorie import BudgetCategory
 
 
 class BudgetBox:
@@ -31,7 +33,7 @@ class BudgetBox:
             raise Exception("Budget is over")
         self.categories.append(BudgetCategory(category_name, amount))
 
-    def get_categories_name(self) -> list[str]:
+    def get_categories_name(self) -> List[str]:
         """
         Returns a list of the names of the categories.
         :return: list[str]
@@ -87,3 +89,14 @@ class BudgetBox:
 
         return f"\tBudgetBox: {self.amount}\n" \
                f"\t\tCategories: {categories_string}"
+
+    def to_json(self) -> dict:
+        """
+        Returns a json representation of the object.
+        :return: json representation of the object
+        :return: dict
+        """
+        return {
+            "amount": self.amount,
+            "categories": [category.to_json() for category in self.categories]
+        }
