@@ -7,11 +7,11 @@ class MemoryDbStoreTestCase(unittest.TestCase):
         self.db = MemoryDbStore()
 
     def tearDown(self) -> None:
-        self.db = None
+        self.db.clear()
 
     def test_get_set_get(self):
         self.db.set('test1', 'test2')
-        self.assertEqual(self.db.get('test1'), 'test2')
+        self.assertEqual('test2', self.db.get('test1'))
 
     def test_get_with_no_exist_value(self):
         self.assertEqual(self.db.get('test1'), None)

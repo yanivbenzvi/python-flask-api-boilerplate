@@ -7,61 +7,52 @@ from src.models.budget_category import BudgetCategory
 
 
 def create_budget_category(req):
-    try:
-        user_id = req.get('user_id')
-        user = User.get(user_id)
-        if not user:
-            raise APIError('User not found', HTTPStatus.BAD_REQUEST)
+    user_id = req.get('user_id')
+    user = User.get(user_id)
+    if not user:
+        raise APIError('User not found', HTTPStatus.BAD_REQUEST)
 
-        budget_id = str(user.budget_id)
-        budget_box = BudgetBox.get(budget_id)
-        if not budget_box:
-            raise APIError('BudgetBox not found', HTTPStatus.BAD_REQUEST)
+    budget_id = str(user.budget_id)
+    budget_box = BudgetBox.get(budget_id)
+    if not budget_box:
+        raise APIError('BudgetBox not found', HTTPStatus.BAD_REQUEST)
 
-        del req['user_id']
-        budget_category = BudgetCategory(**req)
-        budget_category.save()
+    del req['user_id']
+    budget_category = BudgetCategory(**req)
+    budget_category.save()
 
-        budget_box.add_category(budget_category)
-        budget_box.save()
+    budget_box.add_category(budget_category)
+    budget_box.save()
 
-        return budget_category.to_json(), HTTPStatus.CREATED
-    except Exception as e:
-        raise e
+    return budget_category.to_json(), HTTPStatus.CREATED
 
 
 def get_budget_category_by_id(user_id):
-    try:
-        budget_box = BudgetCategory.get(user_id)
-        if budget_box:
-            return budget_box.to_json()
-        raise APIError('BudgetCategory not found', HTTPStatus.NOT_FOUND)
-    except Exception as e:
-        raise e
+    budget_box = BudgetCategory.get(user_id)
+    if budget_box:
+        return budget_box.to_json()
+    raise APIError('BudgetCategory not found', HTTPStatus.NOT_FOUND)
 
 
 def delete_budget_category_by_id(budget_category_id, req):
-    try:
-        user_id = req.get('user_id', None)
-        user = User.get(user_id)
-        budget_id = str(user.budget_id)
+    user_id = req.get('user_id', None)
+    user = User.get(user_id)
+    budget_id = str(user.budget_id)
 
-        budget_box = BudgetCategory.get(budget_id)
-        budget_category = BudgetCategory.get(budget_category_id)
+    budget_box = BudgetCategory.get(budget_id)
+    budget_category = BudgetCategory.get(budget_category_id)
 
-        if not user:
-            raise APIError('User not found', HTTPStatus.BAD_REQUEST)
-        if not budget_box:
-            raise APIError('BudgetBox not found', HTTPStatus.NO_CONTENT)
-        if not budget_category:
-            raise APIError('BudgetCategory not found', HTTPStatus.NO_CONTENT)
+    if not user:
+        raise APIError('User not found', HTTPStatus.BAD_REQUEST)
+    if not budget_box:
+        raise APIError('BudgetBox not found', HTTPStatus.NO_CONTENT)
+    if not budget_category:
+        raise APIError('BudgetCategory not found', HTTPStatus.NO_CONTENT)
 
-        budget_box.remove_category(budget_category)
+    budget_box.remove_category(budget_category)
 
-        budget_category.delete()
-        return budget_box.to_json(), HTTPStatus.OK
-    except Exception as e:
-        raise e
+    budget_category.delete()
+    return budget_box.to_json(), HTTPStatus.OK
 
 
 def get_all_budget_category():
@@ -72,11 +63,8 @@ def get_all_budget_category():
 
 
 def update_budget_box_by_id(user_id, req):
-    try:
-        user = User.get(user_id)
-        if user:
-            user.update(**req)
-            return user.to_json()
-        raise APIError('User not found', HTTPStatus.NO_CONTENT)
-    except Exception as e:
-        raise e
+    user = User.get(user_id)
+    if user:
+        user.update(**req)
+        return user.to_json()
+    raise APIError('User not found', HTTPStatus.NO_CONTENT)

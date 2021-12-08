@@ -1,37 +1,40 @@
 from http import HTTPStatus
 
 from src import APIError
+from src.models.budget_category import BudgetCategory
+from src.models.budgetbox import BudgetBox
 from src.models.user import User
 
 
 def create_user(req):
-    try:
-        user = User(**req)
-        user.save()
-        return user.to_json(), HTTPStatus.CREATED
-    except Exception as e:
-        return e
+    user = User(**req)
+    user.save()
+    return user.to_json(), HTTPStatus.CREATED
 
 
 def get_user_by_id(user_id):
-    try:
-        user = User.get(user_id)
-        if user:
-            return user.to_json()
-        raise APIError('User not found', HTTPStatus.NOT_FOUND)
-    except Exception as e:
-        raise e
+    user = User.get(user_id)
+    if user:
+        return user.to_json()
+    raise APIError('User not found', HTTPStatus.NOT_FOUND)
 
 
 def delete_user_by_id(user_id):
-    try:
-        user = User.get(user_id)
-        if user:
-            user.delete()
-            return user.to_json(), HTTPStatus.OK
+    user = User.get(user_id)
+
+    if not user:
         raise APIError('User not found', HTTPStatus.NO_CONTENT)
-    except Exception as e:
-        raise e
+
+    budget_id = user.budget_id
+    budget_box = BudgetBox.get(budget_id)
+    if budget_box:
+        categories_id_list = budget_box.categories_id_list
+        budget_box.delete()
+        categories_object_list = [BudgetCategory.get(category_id) for category_id in categories_id_list]
+        [category_object.delete() for category_object in categories_object_list]
+
+    user.delete()
+    return user.to_json(), HTTPStatus.OK
 
 
 def get_all_user():
@@ -42,11 +45,11 @@ def get_all_user():
 
 
 def update_user_by_id(user_id, req):
-    try:
-        user = User.get(user_id)
-        if user:
-            user.update(**req)
-            return user.to_json()
+    user = User.get(user_id)
+    if not user:
         raise APIError('User not found', HTTPStatus.NO_CONTENT)
-    except Exception as e:
-        raise e
+
+    user.update(**req)
+    user.save()
+
+    return user.to_json()

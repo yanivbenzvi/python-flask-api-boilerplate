@@ -48,6 +48,42 @@ class MyTestCase(unittest.TestCase):
         data = response.get_json()
         self.assertEqual(404, response.status_code)
 
+    def test_delete_user_by_id_without_insertion_empty_result(self):
+        response = self.app.delete('/user/1')
+        self.assertEqual(204, response.status_code)
+
+    def test_delete_user_by_id_with_insertion_result(self):
+        response = self.app.post('/user', json={'username': 'test'})
+
+        user_id = response.get_json().get('id')
+        response = self.app.delete(f'/user/{user_id}')
+        data = response.get_json()
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(user_id, data['id'])
+
+    def test_delete_user_by_id_with_insertion_result_not_found(self):
+        response = self.app.post('/user', json={'username': 'test'})
+        user_id = response.get_json().get('id')
+
+        response = self.app.delete(f'/user/{user_id + "1"}')
+        self.assertEqual(204, response.status_code)
+
+    def test_delete_a_deleted_user_by_id_without_insertion_empty_result(self):
+        response = self.app.post('/user', json={'username': 'test'})
+        user_id = response.get_json().get('id')
+
+        response = self.app.delete(f'/user/{user_id}')
+        data = response.get_json()
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(user_id, data['id'])
+
+        response = self.app.delete(f'/user/{user_id}')
+        self.assertEqual(204, response.status_code)
+
+    def test_update_user_by_id_without_insertion_empty_result(self):
+        response = self.app.put('/user/1', json={'username': 'test'})
+        self.assertEqual(204, response.status_code)
+
 
 if __name__ == '__main__':
     unittest.main()

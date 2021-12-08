@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class MemoryDbStore:
     """
     Singleton instance of in memory db
@@ -20,7 +23,7 @@ class MemoryDbStore:
         :param key:
         :return:
         """
-        return self.__db.get(key, None)
+        return deepcopy(self.__db.get(key, None))
 
     def get_all_by_instance_type(self, instance_type):
         """
