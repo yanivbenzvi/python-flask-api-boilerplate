@@ -20,11 +20,11 @@ class TestingConfig(Config):
     TESTING = True
 
 
-config = {
+config_list = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
 }
 
-exportConfig = config[os.getenv('FLASK_ENV', 'default')]
+config = config_list[os.getenv('FLASK_ENV', 'default')]

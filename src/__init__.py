@@ -1,6 +1,6 @@
 import json
 
-import config
+from .config import config
 from flask import Flask, Blueprint, jsonify
 from werkzeug.exceptions import HTTPException, InternalServerError
 
@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
 
     # app configuration
-    app.config.from_object(config.exportConfig)
+    app.config.from_object(config)
 
     # register error handlers
     register_error_handlers(app)
