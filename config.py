@@ -4,7 +4,7 @@ import os
 class Config(object):
     DEBUG = False
     TESTING = False
-    PORT = 4000
+    PORT = os.getenv('PORT', '4000')
     HOST = '127.0.0.1'
 
 

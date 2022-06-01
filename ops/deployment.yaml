@@ -16,7 +16,6 @@ spec:
     spec:
       containers:
         - name: flaskapi
-          image: localhost:5000/message-service:1.0
-          imagePullPolicy: Never
+          image: local/message-service:1.0
           ports:
-            - containerPort: 5000
+            - containerPort: 4000

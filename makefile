@@ -9,7 +9,8 @@ tests:
 	unittest discover -s 'test' -p '*_test.py'
 
 docker-build:
-	docker build -t message-service:1.0 .
+	nerdctl -n k8s.io build -t local/message-service:1.0 .
+	#docker build -t message-service:1.0 .
 
 docker-run:
 	docker run -p 4000:4000 message-service:1.0
