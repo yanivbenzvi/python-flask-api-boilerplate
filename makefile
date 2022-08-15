@@ -22,3 +22,12 @@ kube-run:
 kube-delete:
 	kubectl delete -f ops/deployment.yaml
 	kubectl delete -f ops/service.yaml
+
+helm-install:
+	helm install message-service ops/helm
+
+helm-uninstall:
+	helm delete message-service
+
+helm-test:
+	helm test message-service
