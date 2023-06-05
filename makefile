@@ -1,12 +1,24 @@
 install:
-	python -m virtualenv .venv
-	. ./venv/bin/activate
-	pip install -r requirements.txt
+	poetry install
 
 run:
-	. ./venv/bin/activate
-	gunicorn --workers=2 src.app:app
+	poetry run gunicorn --workers=2 src.main:app
 
 tests:
 	. ./venv/bin/activate
 	unittest discover -s 'test' -p '*_test.py'
+
+docker-build:
+	nerdctl -n k8s.io build -t local/message-service:1.0 .
+	#docker build -t message-service:1.0 .
+
+docker-run:
+	docker run -p 4000:4000 message-service:1.0
+
+kube-run:
+	kubectl apply -f ops/deployment.yaml
+	kubectl apply -f ops/service.yaml
+
+kube-delete:
+	kubectl delete -f ops/deployment.yaml
+	kubectl delete -f ops/service.yaml
